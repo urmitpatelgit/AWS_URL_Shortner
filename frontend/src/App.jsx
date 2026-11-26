@@ -1,0 +1,14 @@
+import React, { useEffect, useState } from 'react';
+const API = import.meta.env.VITE_API_BASE || '/api';
+function Home() {
+  const [url,setUrl]=useState(''),[result,setResult]=useState(null),[error,setError]=useState(''),[busy,setBusy]=useState(false);
+  async function submit(e){e.preventDefault();setError('');setResult(null);setBusy(true);try{const r=await fetch(`${API}/shorten`,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({longUrl:url})});const data=await r.json();if(!r.ok)throw new Error(data.error||'Could not shorten URL');setResult(data);}catch(e){setError(e.message);}finally{setBusy(false);}}
+  return <main className="card"><div className="brand"><b>u</b> urmit<span>.</span></div><p className="eyebrow">A LITTLE LINK GOES A LONG WAY</p><h1>Make your links<br/><em>go further.</em></h1><p className="intro">Shorten a long URL into a neat little link. Simple, fast, and ready to share.</p><form onSubmit={submit}><label htmlFor="url">Your destination URL</label><div className="row"><input id="url" type="url" required placeholder="https://example.com/a/very/long/link" value={url} onChange={e=>setUrl(e.target.value)}/><button disabled={busy}>{busy?'Working…':'Shorten link →'}</button></div></form>{error&&<p role="alert" className="error">{error}</p>}{result&&<div className="result"><small>Your short link</small><a href={result.shortUrl}>{result.shortUrl}</a><button onClick={()=>navigator.clipboard.writeText(result.shortUrl)}>Copy link</button><small>Links expire in 30 days.</small></div>}<footer>↗ &nbsp;Fast redirects　　◷ &nbsp;30-day links　　▤ &nbsp;Click counts</footer></main>;
+}
+function Redirect({code}) {
+  const [data,setData]=useState(null),[error,setError]=useState(''),[seconds,setSeconds]=useState(5);
+  useEffect(()=>{let live=true;fetch(`${API}/resolve/${encodeURIComponent(code)}`).then(async r=>{const d=await r.json();if(!r.ok)throw Error(d.error||'Link unavailable');if(live)setData(d);}).catch(e=>live&&setError(e.message));return()=>{live=false;};},[code]);
+  useEffect(()=>{if(!data)return;const tick=setInterval(()=>setSeconds(s=>Math.max(0,s-1)),1000);const go=setTimeout(()=>location.replace(data.longUrl),5000);return()=>{clearInterval(tick);clearTimeout(go);};},[data]);
+  return <main className="card"><div className="brand"><b>u</b> urmit<span>.</span></div>{error?<><h1>Link unavailable</h1><p>{error}</p><a href="/">Back to Urmit</a></>:!data?<><p className="eyebrow">ONE MOMENT</p><h1>Finding your<br/><em>destination.</em></h1></>:<><p className="eyebrow">YOU’RE ON YOUR WAY</p><h1>Taking you<br/><em>there shortly.</em></h1><p className="intro">Redirecting in {seconds} seconds.</p><a href={data.longUrl}>Continue now →</a></>}</main>;
+}
+export default function App(){const code=decodeURIComponent(location.pathname.split('/').filter(Boolean).at(-1)||'');return code?<Redirect code={code}/>:<Home/>;}

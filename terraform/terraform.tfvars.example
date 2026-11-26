@@ -1,0 +1,14 @@
+aws_region          = "us-east-1"
+project_name        = "urmit-url-shortener"
+domain_name         = "links.example.com"
+log_retention_days  = 30
+
+# First pass: keep the defaults below. This creates the ACM certificate and
+# supporting application resources, but does not create CloudFront yet.
+create_distribution        = false
+acm_validation_record_fqdns = []
+
+# After publishing the ACM CNAME record(s) at your external DNS provider,
+# set create_distribution=true and list their full record names here, e.g.:
+# create_distribution        = true
+# acm_validation_record_fqdns = ["_token.links.example.com"]
