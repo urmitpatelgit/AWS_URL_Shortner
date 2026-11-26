@@ -1,5 +1,7 @@
 # Serverless URL Shortener
 
+**Live demo:** [https://url.urmitp.com/](https://url.urmitp.com/)
+
 A serverless URL shortener built with React, Vite, Node.js 22 Lambda, API Gateway HTTP API, DynamoDB, S3, CloudFront, and Terraform. It creates links that expire after 30 days, atomically counts successful redirects, and displays a five-second redirect page.
 
 ## Architecture
