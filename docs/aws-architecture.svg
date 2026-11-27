@@ -1,0 +1,159 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" role="img" aria-labelledby="title desc">
+  <title id="title">Urmit URL Shortener AWS Architecture</title>
+  <desc id="desc">Browser traffic flows through external DNS and CloudFront. Static React assets are served from a private S3 bucket using OAC. API requests flow through API Gateway to Lambda functions and DynamoDB. CloudWatch stores application logs.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f6f9fc"/><stop offset="1" stop-color="#edf4f7"/></linearGradient>
+    <filter id="shadow" x="-15%" y="-15%" width="130%" height="140%"><feDropShadow dx="0" dy="5" stdDeviation="8" flood-color="#17324d" flood-opacity=".12"/></filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M1 1L11 6 1 11Z" fill="#61798b"/></marker>
+    <style>
+      text{font-family:Inter,Segoe UI,Arial,sans-serif;fill:#163246}
+      .title{font-size:36px;font-weight:700;letter-spacing:.2px}
+      .subtitle{font-size:16px;fill:#5e7485}
+      .label{font-size:19px;font-weight:700}
+      .detail{font-size:14px;fill:#5c7283}
+      .tiny{font-size:12px;fill:#617789}
+      .card{fill:#fff;stroke:#d8e3ea;stroke-width:1.5;filter:url(#shadow)}
+      .line{fill:none;stroke:#61798b;stroke-width:3;marker-end:url(#arrow)}
+      .dashed{fill:none;stroke:#91a5b3;stroke-width:2.5;stroke-dasharray:8 7;marker-end:url(#arrow)}
+      .iconletter{font-size:23px;font-weight:800;fill:#fff;text-anchor:middle}
+      .center{text-anchor:middle}
+    </style>
+  </defs>
+  <rect width="1600" height="1000" rx="0" fill="url(#bg)"/>
+  <text x="70" y="76" class="title">Urmit URL Shortener</text>
+  <text x="70" y="108" class="subtitle">AWS serverless architecture · us-east-1 · static React SPA + URL API</text>
+
+  <!-- Browser -->
+  <g>
+    <rect x="55" y="394" width="205" height="170" rx="20" class="card"/>
+    <circle cx="157" cy="444" r="34" fill="#263f53"/>
+    <path d="M139 437h36v26h-36z" fill="none" stroke="#fff" stroke-width="3" rx="3"/>
+    <path d="M139 443h36M148 470h18" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+    <text x="157" y="505" class="label center">Visitor browser</text>
+    <text x="157" y="531" class="detail center">Shorten URL · open link</text>
+  </g>
+  <!-- External DNS -->
+  <g>
+    <rect x="320" y="394" width="205" height="170" rx="20" class="card"/>
+    <circle cx="422" cy="444" r="34" fill="#8c4fff"/>
+    <circle cx="422" cy="444" r="21" fill="none" stroke="#fff" stroke-width="2.5"/>
+    <path d="M401 444h42M422 423c10 11 10 31 0 42M422 423c-10 11-10 31 0 42" fill="none" stroke="#fff" stroke-width="2"/>
+    <text x="422" y="505" class="label center">External DNS</text>
+    <text x="422" y="531" class="detail center">url.example.com</text>
+  </g>
+  <!-- CloudFront -->
+  <g>
+    <rect x="590" y="350" width="245" height="258" rx="22" fill="#fff" stroke="#e7a900" stroke-width="2" filter="url(#shadow)"/>
+    <rect x="681" y="385" width="64" height="64" rx="18" fill="#e7a900"/>
+    <path d="M700 426c-10-1-14-8-10-15 2-4 7-6 12-5 3-8 14-10 20-5 3 2 4 5 4 8 7 0 11 4 11 9s-5 8-12 8h-25z" fill="none" stroke="#fff" stroke-width="3" stroke-linejoin="round"/>
+    <text x="712" y="484" class="label center">Amazon CloudFront</text>
+    <text x="712" y="511" class="detail center">HTTPS · edge routing · cache</text>
+    <rect x="624" y="535" width="177" height="48" rx="12" fill="#fff7dc"/>
+    <text x="712" y="556" class="tiny center" font-weight="700">CloudFront Function</text>
+    <text x="712" y="574" class="tiny center">SPA route → index.html</text>
+  </g>
+
+  <!-- S3 static branch -->
+  <g>
+    <rect x="1000" y="145" width="260" height="190" rx="20" class="card"/>
+    <circle cx="1130" cy="194" r="31" fill="#3f8624"/>
+    <path d="M1113 184l17-8 17 8v20l-17 8-17-8zM1113 184l17 9 17-9M1130 193v19" fill="none" stroke="#fff" stroke-width="2.5" stroke-linejoin="round"/>
+    <text x="1130" y="247" class="label center">Amazon S3</text>
+    <text x="1130" y="271" class="detail center">Private website bucket</text>
+    <text x="1130" y="293" class="detail center">React + Vite assets</text>
+    <rect x="1052" y="308" width="156" height="21" rx="10" fill="#e7f4e1"/>
+    <text x="1130" y="323" class="tiny center" font-weight="700">Origin Access Control</text>
+  </g>
+
+  <!-- API Gateway -->
+  <g>
+    <rect x="1000" y="435" width="260" height="170" rx="20" class="card"/>
+    <circle cx="1130" cy="482" r="31" fill="#a166ff"/>
+    <path d="M1112 472h36M1112 482h36M1112 492h36" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="1116" cy="472" r="3" fill="#fff"/><circle cx="1143" cy="482" r="3" fill="#fff"/><circle cx="1125" cy="492" r="3" fill="#fff"/>
+    <text x="1130" y="535" class="label center">API Gateway</text>
+    <text x="1130" y="560" class="detail center">HTTP API · /api/*</text>
+    <text x="1130" y="582" class="tiny center">CORS · throttling</text>
+  </g>
+
+  <!-- Lambda handlers -->
+  <g>
+    <rect x="1360" y="335" width="190" height="130" rx="18" class="card"/>
+    <circle cx="1405" cy="378" r="25" fill="#d86613"/>
+    <path d="M1407 358l-13 22h11l-2 18 14-24h-11z" fill="#fff"/>
+    <text x="1470" y="379" class="label center">Shorten</text>
+    <text x="1455" y="413" class="detail center">Lambda function</text>
+    <text x="1455" y="438" class="tiny center">Deduplicate · create link</text>
+  </g>
+  <g>
+    <rect x="1360" y="535" width="190" height="130" rx="18" class="card"/>
+    <circle cx="1405" cy="578" r="25" fill="#d86613"/>
+    <path d="M1407 558l-13 22h11l-2 18 14-24h-11z" fill="#fff"/>
+    <text x="1470" y="579" class="label center">Resolve</text>
+    <text x="1455" y="613" class="detail center">Lambda function</text>
+    <text x="1455" y="638" class="tiny center">Expiry check · redirect</text>
+  </g>
+
+  <!-- DynamoDB -->
+  <g>
+    <rect x="1040" y="735" width="340" height="190" rx="20" class="card"/>
+    <circle cx="1110" cy="786" r="32" fill="#3d6fb4"/>
+    <ellipse cx="1110" cy="776" rx="16" ry="7" fill="none" stroke="#fff" stroke-width="2.5"/>
+    <path d="M1094 776v21c0 4 7 8 16 8s16-4 16-8v-21M1094 786c0 4 7 8 16 8s16-4 16-8" fill="none" stroke="#fff" stroke-width="2.5"/>
+    <text x="1220" y="786" class="label center">Amazon DynamoDB</text>
+    <text x="1210" y="820" class="detail center">On-demand · 30-day TTL</text>
+    <text x="1210" y="846" class="tiny center">URL# hash mapping + byLongUrl GSI</text>
+    <text x="1210" y="870" class="tiny center">Atomic click counts · transactional writes</text>
+    <text x="1210" y="896" class="tiny center">Point-in-time recovery · deletion protection</text>
+  </g>
+
+  <!-- CloudWatch -->
+  <g>
+    <rect x="635" y="755" width="270" height="145" rx="20" class="card"/>
+    <circle cx="695" cy="806" r="29" fill="#e65a2e"/>
+    <path d="M681 813l9-19 8 14 7-9 5 14h-29z" fill="none" stroke="#fff" stroke-width="2.5" stroke-linejoin="round"/>
+    <text x="790" y="805" class="label center">Amazon CloudWatch</text>
+    <text x="790" y="838" class="detail center">Lambda and API logs</text>
+    <text x="790" y="863" class="tiny center">Configured retention</text>
+  </g>
+
+  <!-- ACM certificate annotation -->
+  <g>
+    <rect x="590" y="160" width="245" height="112" rx="18" fill="#fff" stroke="#cbd8e1" stroke-width="1.5"/>
+    <circle cx="635" cy="216" r="25" fill="#b38b00"/>
+    <path d="M635 200l13 5v10c0 9-7 15-13 18-6-3-13-9-13-18v-10z" fill="none" stroke="#fff" stroke-width="2.3"/>
+    <path d="M629 216l4 4 8-9" fill="none" stroke="#fff" stroke-width="2.3"/>
+    <text x="724" y="212" class="label center">AWS Certificate</text>
+    <text x="724" y="236" class="detail center">Manager · TLS cert</text>
+    <text x="724" y="257" class="tiny center">Issued in us-east-1</text>
+  </g>
+
+  <!-- Flows -->
+  <path d="M260 479H320" class="line"/>
+  <path d="M525 479H590" class="line"/>
+  <path d="M712 350V272" class="dashed"/>
+  <path d="M835 420C900 420 920 240 1000 240" class="line"/>
+  <text x="896" y="307" class="tiny center">Site paths</text>
+  <path d="M835 490H1000" class="line"/>
+  <text x="917" y="475" class="tiny center">/api/*</text>
+  <path d="M1260 488C1310 488 1315 400 1360 400" class="line"/>
+  <path d="M1260 552C1310 552 1315 600 1360 600" class="line"/>
+  <path d="M1455 465C1455 695 1370 700 1345 745" class="line"/>
+  <path d="M1455 665C1455 700 1390 712 1358 752" class="line"/>
+  <path d="M1040 824H905" class="dashed"/>
+  <text x="969" y="807" class="tiny center">Logs</text>
+  <path d="M1000 240H963" class="dashed"/>
+  <text x="964" y="221" class="tiny center">OAC</text>
+  <path d="M260 520C460 690 660 690 1000 565" fill="none" stroke="#1a7f67" stroke-width="2.5" stroke-dasharray="7 7" marker-end="url(#arrow)"/>
+  <text x="608" y="656" class="tiny center" fill="#1a7f67">Redirect response to browser</text>
+
+  <!-- Legend / IaC -->
+  <rect x="70" y="760" width="475" height="140" rx="20" fill="#fff" stroke="#d8e3ea" stroke-width="1.5"/>
+  <text x="105" y="800" class="label">Infrastructure and delivery</text>
+  <text x="105" y="832" class="detail">Terraform provisions AWS resources; scripts build, package,</text>
+  <text x="105" y="855" class="detail">deploy Lambda code, and publish frontend files to S3.</text>
+  <rect x="105" y="872" width="16" height="5" rx="2" fill="#61798b"/>
+  <text x="130" y="881" class="tiny">Request / response flow</text>
+  <rect x="300" y="872" width="16" height="5" rx="2" fill="#91a5b3"/>
+  <text x="325" y="881" class="tiny">Supporting service</text>
+</svg>
