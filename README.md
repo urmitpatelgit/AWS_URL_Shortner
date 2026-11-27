@@ -6,25 +6,9 @@ A serverless URL shortener built with React, Vite, Node.js 22 Lambda, API Gatewa
 
 ## Architecture
 
-```mermaid
-flowchart LR
-    visitor[Visitor browser] -->|HTTPS| dns[External DNS<br/>url.example.com]
-    dns --> cf[Amazon CloudFront<br/>ACM TLS certificate]
+![Horizontal AWS architecture diagram for the Urmit URL shortener](docs/aws-architecture.svg)
 
-    cf -->|Site and short-code paths| spa[CloudFront Function<br/>SPA route to index.html]
-    spa -->|OAC access| s3[(Private S3 bucket<br/>React + Vite assets)]
-    s3 -->|HTML, CSS, JS| visitor
-
-    cf -->|/api/*| api[API Gateway<br/>HTTP API]
-    api --> shorten[Shorten Lambda]
-    api --> resolve[Resolve Lambda]
-    shorten -->|URL#hash mapping, transaction,<br/>byLongUrl GSI| ddb[(DynamoDB on-demand table<br/>TTL: 30 days)]
-    resolve -->|Get destination;<br/>atomic click count| ddb
-    resolve -->|Destination URL| visitor
-
-    shorten -. logs .-> logs[CloudWatch Logs]
-    resolve -. logs .-> logs
-```
+Diagram service marks use the official [AWS architecture icons](https://aws.amazon.com/architecture/icons/).
 
 - Private S3 bucket for the Vite site, accessed through CloudFront Origin Access Control.
 - CloudFront Function serves the React entry point for short-code paths; `/api/*` goes to API Gateway.
