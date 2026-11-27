@@ -13,6 +13,17 @@ resource "aws_dynamodb_table" "urls" {
     type = "S"
   }
 
+  attribute {
+    name = "longUrl"
+    type = "S"
+  }
+
+  global_secondary_index {
+    name            = "byLongUrl"
+    hash_key        = "longUrl"
+    projection_type = "ALL"
+  }
+
   ttl {
     attribute_name = "expiresAt"
     enabled        = true

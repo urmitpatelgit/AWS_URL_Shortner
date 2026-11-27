@@ -24,8 +24,18 @@ data "aws_iam_policy_document" "lambda_runtime" {
   }
 
   statement {
-    actions   = ["dynamodb:PutItem", "dynamodb:GetItem", "dynamodb:UpdateItem"]
+    actions = [
+      "dynamodb:PutItem",
+      "dynamodb:GetItem",
+      "dynamodb:UpdateItem",
+      "dynamodb:TransactWriteItems"
+    ]
     resources = [aws_dynamodb_table.urls.arn]
+  }
+
+  statement {
+    actions   = ["dynamodb:Query"]
+    resources = ["${aws_dynamodb_table.urls.arn}/index/*"]
   }
 }
 

@@ -9,7 +9,7 @@ A serverless URL shortener built with React, Vite, Node.js 22 Lambda, API Gatewa
 - Private S3 bucket for the Vite site, accessed through CloudFront Origin Access Control.
 - CloudFront Function serves the React entry point for short-code paths; `/api/*` goes to API Gateway.
 - API Gateway HTTP API invokes separate Lambda handlers for creating and resolving links.
-- DynamoDB uses on-demand billing, TTL cleanup, point-in-time recovery, and deletion protection.
+- DynamoDB uses on-demand billing, a destination-URL index, TTL cleanup, point-in-time recovery, and deletion protection.
 - ACM provisions the CloudFront certificate in `us-east-1`; DNS is managed outside Terraform.
 
 ## Prerequisites
@@ -105,7 +105,7 @@ The Vite development page is useful for visual work. The shortening and resolvin
 - `POST /api/shorten` with JSON body `{ "longUrl": "https://example.org/page" }`.
 - `GET /api/resolve/{code}` returns the destination URL for the redirect screen.
 
-Only `http` and `https` destination URLs are accepted. Lambda checks the stored expiry on every resolution and returns `410 Gone` for expired links; DynamoDB TTL performs eventual cleanup. Successful resolutions increment `clickCount` with an atomic DynamoDB update.
+Only `http` and `https` destination URLs up to 2,048 bytes are accepted. Equivalent normalized URLs reuse the same active short link instead of creating duplicates. The `byLongUrl` index also finds links created before the idempotent mapping was added; after reusing one, the handler stores a mapping for later requests. New URL mappings and link records are written transactionally, so concurrent requests for the same URL converge on one short link. Once a link expires, submitting the destination again creates a fresh link. Lambda checks expiry on every resolution and returns `410 Gone` for expired links; DynamoDB TTL performs eventual cleanup. Successful resolutions increment `clickCount` with an atomic DynamoDB update.
 
 ## Cost and cleanup
 
